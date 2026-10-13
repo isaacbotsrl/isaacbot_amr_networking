@@ -95,15 +95,17 @@ def create_app(service: UplinkService, user: str, password: str | None,
     def healthz():
         return {'ok': True}
 
-    icons = {p.name: p for p in icons_dir.glob('*.png')} if icons_dir and icons_dir.is_dir() else {}
+    icon_types = {'.svg': 'image/svg+xml', '.png': 'image/png'}
+    icons = ({p.name: p for p in icons_dir.iterdir() if p.suffix in icon_types}
+             if icons_dir and icons_dir.is_dir() else {})
 
     @app.get('/icons/{name}')
     def icon(name: str):
-        # Public (the browser asks for the favicon before the login) and limited to the PNGs
+        # Public (the browser asks for the favicon before the login) and limited to the SVGs/PNGs
         # that were in the icons folder at start-up: no path from the request reaches the disk.
         if name not in icons:
             raise HTTPException(404, 'no such icon')
-        return FileResponse(icons[name], media_type='image/png',
+        return FileResponse(icons[name], media_type=icon_types[icons[name].suffix],
                             headers={'Cache-Control': 'max-age=86400'})
 
     @app.get('/', dependencies=[Depends(auth)])

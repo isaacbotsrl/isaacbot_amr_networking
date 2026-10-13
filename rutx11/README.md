@@ -1,6 +1,6 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="../icons/isaacbot-lockup-white-bold.svg">
+    <source media="(prefers-color-scheme: dark)" srcset="../icons/isaacbot-lockup-white.svg">
     <img src="../icons/isaacbot-lockup-black-bold.svg" alt="IsaacBot" width="240">
   </picture>
 </p>
@@ -9,7 +9,7 @@
 
 Everything about the Ardennes's **Teltonika RUTX11** router:
 
-- **`icons/`**: the IsaacBot app icon, the web page's logo and favicon.
+- **`icons/`**: the official IsaacBot brand files; the black/white mark is the web page's logo and favicon.
 - **The network page** (`uplink_manager/`): a small web app that switches the router's Wi-Fi
   uplink to another network **without breaking the firewall/NAT rules**. It runs on the isaacbot
   (container `isaacbot-amr-network` in [isaacbot_amr_balenaos](https://github.com/isaacbotsrl/isaacbot_amr_balenaos))

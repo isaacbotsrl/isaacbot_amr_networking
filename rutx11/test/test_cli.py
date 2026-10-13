@@ -54,8 +54,8 @@ def test_non_loopback_needs_a_password(monkeypatch):
 def test_icons_are_public_and_limited_to_the_folder(monkeypatch):
     app, _ = build(monkeypatch, '--bind', '0.0.0.0', page_pw='s3cret')
     c = TestClient(app, base_url='http://192.168.1.201:5080')
-    r = c.get('/icons/isaacbot-app-icon.png')
-    assert r.status_code == 200 and r.headers['content-type'] == 'image/png'
+    r = c.get('/icons/isaacbot-mark-black.svg')
+    assert r.status_code == 200 and r.headers['content-type'].startswith('image/svg+xml')
     assert c.get('/icons/..%2Fpyproject.toml').status_code == 404
     assert c.get('/icons/nope.png').status_code == 404
 

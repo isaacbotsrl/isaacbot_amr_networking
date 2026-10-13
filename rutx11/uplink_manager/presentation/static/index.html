@@ -19,7 +19,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Isaacbot Network</title>
-<link rel="icon" type="image/png" href="/icons/isaacbot-app-icon.png">
+<link rel="icon" type="image/svg+xml" href="/icons/isaacbot-mark-black.svg" media="(prefers-color-scheme: light)">
+<link rel="icon" type="image/svg+xml" href="/icons/isaacbot-mark-white.svg" media="(prefers-color-scheme: dark)">
 <style>
   :root {
     --bg: #f4f5f7; --card: #fff; --fg: #1d2330; --muted: #667085; --line: #e3e6eb;
@@ -34,7 +35,7 @@
   body { margin: 0; background: var(--bg); color: var(--fg);
          font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
   header { padding: 18px 16px 6px; max-width: 920px; margin: 0 auto; display: flex; gap: 14px; align-items: center; }
-  header img { width: 56px; height: 56px; flex: none; }
+  header picture, header img { height: 52px; width: auto; flex: none; display: block; }
   header h1 { font-size: 20px; margin: 0; }
   header p { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
   main { max-width: 920px; margin: 0 auto; padding: 8px 16px 40px; display: grid; gap: 14px; }
@@ -83,7 +84,10 @@
 </head>
 <body>
 <header>
-  <img src="/icons/isaacbot-app-icon.png" alt="IsaacBot" onerror="this.remove()">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="/icons/isaacbot-mark-white.svg">
+    <img src="/icons/isaacbot-mark-black.svg" alt="IsaacBot" onerror="this.parentElement.remove()">
+  </picture>
   <div>
   <h1>Isaacbot network</h1>
   <p>Wi-Fi uplink of the RUTX11 router. Every change is verified. If the new network does not
