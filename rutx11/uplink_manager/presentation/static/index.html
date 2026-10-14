@@ -18,139 +18,268 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Isaacbot Network</title>
+<title>Network · IsaacBot</title>
 <link rel="icon" type="image/svg+xml" href="/icons/isaacbot-mark-black.svg" media="(prefers-color-scheme: light)">
 <link rel="icon" type="image/svg+xml" href="/icons/isaacbot-mark-white.svg" media="(prefers-color-scheme: dark)">
+<!-- The IsaacBot website's fonts; offline (no uplink: often why this page is open) the page
+     falls back to Helvetica/Arial and works the same. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
 <style>
+  /* Same look as the IsaacBot website and the RMF robots page: ink, Space Grotesk / Inter. */
   :root {
-    --bg: #f4f5f7; --card: #fff; --fg: #1d2330; --muted: #667085; --line: #e3e6eb;
-    --brand: #ffaa00; --on-brand: #1f1500; --accent: #945a00; --ok: #1a7f37; --warn: #9a6700; --err: #cf222e; --code: #f6f8fa;
+    --bg: #f5f6f8; --card: #ffffff; --fg: #1d2330; --muted: #5d6677; --line: #dde1e8;
+    --chip: #eef1f6; --code: #f6f8fa; --ok: #1e9b4a; --warn: #b86e00; --err: #c62f2f;
+    --accent: #2860d8; --ink: #0a0a0f; --ink-text: #ffffff; --head-bg: rgba(255, 255, 255, .92);
+    --font-head: "Space Grotesk", "Helvetica Neue", Arial, sans-serif;
+    --font-body: "Inter", "Helvetica Neue", Arial, sans-serif;
+    --container: 1200px; --gutter: clamp(16px, 4vw, 40px); --header-h: 88px;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
   }
   @media (prefers-color-scheme: dark) {
-    :root { --bg: #0f1115; --card: #181b21; --fg: #e6e8eb; --muted: #9aa3ad; --line: #2a2f37;
-            --brand: #ffaa00; --on-brand: #1f1500; --accent: #ffb52e; --ok: #3fb950; --warn: #d29922; --err: #f85149; --code: #11141a; }
+    :root { --bg: #14171d; --card: #1d2129; --fg: #e6e9ef; --muted: #99a2b3; --line: #2e3440;
+            --chip: #262b35; --code: #11141a; --ok: #4cc47a; --warn: #e5a13a; --err: #ff6b6b;
+            --accent: #6b9bff; --ink: #ffffff; --ink-text: #0a0a0f; --head-bg: rgba(20, 23, 29, .92); }
   }
   * { box-sizing: border-box; }
   [hidden] { display: none !important; }
-  body { margin: 0; background: var(--bg); color: var(--fg);
-         font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
-  header { padding: 18px 16px 6px; max-width: 920px; margin: 0 auto; display: flex; gap: 14px; align-items: center; }
-  header picture, header img { height: 52px; width: auto; flex: none; display: block; }
-  header h1 { font-size: 20px; margin: 0; }
-  header p { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
-  main { max-width: 920px; margin: 0 auto; padding: 8px 16px 40px; display: grid; gap: 14px; }
-  section { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
-  h2 { font-size: 16px; margin: 0 0 12px; display: flex; align-items: center; gap: 10px; }
-  h2 .grow { flex: 1; }
-  button { font: inherit; border: 1px solid var(--line); background: var(--card); color: var(--fg);
-           padding: 6px 12px; border-radius: 7px; cursor: pointer; }
-  button.primary { background: var(--brand); border-color: var(--brand); color: var(--on-brand); font-weight: 600; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.5 var(--font-body);
+         -webkit-font-smoothing: antialiased; min-height: 100vh; display: flex; flex-direction: column; }
   a { color: var(--accent); }
-  button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+  .container { width: 100%; max-width: calc(var(--container) + 2 * var(--gutter)); margin: 0 auto;
+               padding: 0 var(--gutter); }
+  .spacer { flex: 1; }
+
+  /* Header */
+  .site-header { position: sticky; top: 0; z-index: 50; height: var(--header-h); background: var(--head-bg);
+                 backdrop-filter: saturate(160%) blur(12px); -webkit-backdrop-filter: saturate(160%) blur(12px);
+                 box-shadow: 0 1px 0 var(--line); }
+  .site-header .container { height: 100%; display: flex; align-items: center; gap: 24px; }
+  .site-header .logo img { display: block; width: 180px; height: auto; }
+  .site-nav { display: flex; gap: 30px; }
+  .site-nav a { white-space: nowrap; font-family: var(--font-head); font-size: 13px; font-weight: 500;
+                letter-spacing: .12em; text-transform: uppercase; color: var(--fg); text-decoration: none;
+                padding: 6px 0; border-bottom: 1.5px solid transparent; }
+  .site-nav a.current, .site-nav a:hover { border-bottom-color: var(--ink); }
+  .btn { display: inline-flex; align-items: center; gap: 14px; height: 44px; padding: 0 18px 0 22px;
+         border-radius: 999px; border: 1.5px solid var(--ink); background: var(--ink); color: var(--ink-text);
+         font-family: var(--font-head); font-size: 13px; font-weight: 500; letter-spacing: .08em;
+         text-transform: uppercase; white-space: nowrap; text-decoration: none;
+         transition: background .3s var(--ease), color .3s var(--ease); }
+  .btn:hover { background: transparent; color: var(--ink); }
+  .btn-chevrons { position: relative; overflow: hidden; width: 16px; height: 16px; }
+  .btn-chevrons svg { position: absolute; inset: 0; width: 16px; height: 16px; transition: transform .4s var(--ease); }
+  .btn-chevrons svg:last-child { transform: translateX(-120%); }
+  .btn:hover .btn-chevrons svg:first-child { transform: translateX(120%); }
+  .btn:hover .btn-chevrons svg:last-child { transform: translateX(0); }
+
+  /* Page */
+  main { flex: 1; width: 100%; max-width: calc(var(--container) + 2 * var(--gutter)); margin: 0 auto;
+         padding: 28px var(--gutter) 64px; display: grid; gap: 20px; align-content: start; }
+  main > * { min-width: 0; }
+  .page-title { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; }
+  .page-title h1 { font-family: var(--font-head); font-size: 28px; font-weight: 600; margin: 0; letter-spacing: -.01em; }
+  .intro { margin: -8px 0 0; color: var(--muted); max-width: 760px; }
+  section { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 20px 22px;
+            overflow-x: auto; }
+  h2 { font-family: var(--font-head); font-size: 17px; font-weight: 600; margin: 0 0 16px;
+       display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  h2 .grow { flex: 1; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+  @media (max-width: 900px) { .grid-2 { grid-template-columns: 1fr; } }
+
+  button { font: inherit; border: 1px solid var(--line); background: var(--chip); color: var(--fg);
+           padding: 6px 14px; border-radius: 999px; cursor: pointer; }
+  button.primary { background: var(--ink); border-color: var(--ink); color: var(--ink-text); font-weight: 500; }
+  button.primary:hover:not(:disabled) { background: transparent; color: var(--ink); }
   button.danger { color: var(--err); }
   button:disabled { opacity: .5; cursor: default; }
-  .pill { display: inline-block; padding: 2px 10px; border-radius: 99px; font-size: 13px; font-weight: 600; }
-  .pill.ok { background: color-mix(in srgb, var(--ok) 15%, transparent); color: var(--ok); }
-  .pill.warn { background: color-mix(in srgb, var(--warn) 15%, transparent); color: var(--warn); }
-  .pill.error { background: color-mix(in srgb, var(--err) 15%, transparent); color: var(--err); }
-  .pill.idle { background: var(--line); color: var(--muted); }
-  dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 16px; margin: 0; }
-  dt { color: var(--muted); } dd { margin: 0; overflow-wrap: anywhere; }
+  button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .pill { display: inline-flex; align-items: center; gap: 7px; padding: 4px 12px; border-radius: 999px;
+          font-size: 13px; font-weight: 600; border: 1px solid var(--line); background: var(--card); }
+  .pill::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--muted); }
+  .pill.ok::before { background: var(--ok); } .pill.warn::before { background: var(--warn); }
+  .pill.error::before { background: var(--err); }
+
+  /* Uplink tiles */
+  .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 0; }
+  @media (max-width: 900px) { .tiles { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .tiles { grid-template-columns: 1fr; } }
+  .tile { background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+  .tile dt { font-family: var(--font-head); font-size: 11px; font-weight: 500; letter-spacing: .14em;
+             text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+  .tile dd { margin: 0; font-weight: 500; overflow-wrap: anywhere; }
+  .tile dd .sub { display: block; font-weight: 400; color: var(--muted); font-size: 13px; }
+
+  /* Signal bars */
+  .bars { display: inline-flex; align-items: flex-end; gap: 2px; height: 14px; margin-right: 6px; vertical-align: -1px; }
+  .bars i { width: 4px; border-radius: 1px; background: var(--line); }
+  .bars i:nth-child(1) { height: 25%; } .bars i:nth-child(2) { height: 50%; }
+  .bars i:nth-child(3) { height: 75%; } .bars i:nth-child(4) { height: 100%; }
+  .bars i.on { background: var(--fg); }
+
+  /* Networks table */
   table { width: 100%; border-collapse: collapse; }
-  th, td { text-align: left; padding: 7px 6px; border-bottom: 1px solid var(--line); }
-  th { color: var(--muted); font-weight: 500; font-size: 13px; }
-  tbody tr { cursor: pointer; } tbody tr:hover { background: color-mix(in srgb, var(--brand) 10%, transparent); }
-  tbody tr.sel { background: color-mix(in srgb, var(--brand) 22%, transparent); }
+  th, td { text-align: left; padding: 10px 8px; border-top: 1px solid var(--line); }
+  th { font-family: var(--font-head); font-size: 12px; font-weight: 500; letter-spacing: .08em;
+       text-transform: uppercase; color: var(--muted); border-top: none; }
+  tbody tr { cursor: pointer; } tbody tr:hover { background: var(--chip); }
+  tbody tr.sel { background: color-mix(in srgb, var(--accent) 14%, transparent); }
   tbody tr.nope { cursor: default; color: var(--muted); }
-  .bars { font-family: ui-monospace, monospace; letter-spacing: -1px; }
-  .form { margin-top: 12px; display: grid; gap: 10px; padding: 12px; border: 1px solid var(--line); border-radius: 8px; }
+  .form { margin-top: 14px; display: grid; gap: 12px; padding: 16px; border: 1px solid var(--line);
+          border-radius: 10px; background: var(--bg); }
   .form label { display: grid; gap: 4px; font-size: 13px; color: var(--muted); }
-  input, select { font: inherit; padding: 7px 9px; border: 1px solid var(--line); border-radius: 7px;
-                  background: var(--bg); color: var(--fg); width: 100%; }
+  input, select { font: inherit; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px;
+                  background: var(--card); color: var(--fg); width: 100%; }
   .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-  .note { color: var(--muted); font-size: 13px; margin: 8px 0 0; }
-  .checks { list-style: none; margin: 0; padding: 0; }
-  .checks li { padding: 8px 0; border-bottom: 1px solid var(--line); display: grid; grid-template-columns: 22px 1fr; gap: 6px; }
-  .checks li:last-child { border-bottom: 0; }
-  .icon.ok { color: var(--ok); } .icon.warn { color: var(--warn); } .icon.error { color: var(--err); }
-  .checks .detail { color: var(--muted); font-size: 13px; overflow-wrap: anywhere; }
-  pre { background: var(--code); border: 1px solid var(--line); border-radius: 7px; padding: 10px;
-        font-size: 12.5px; overflow-x: auto; white-space: pre-wrap; margin: 8px 0 0; }
-  details summary { cursor: pointer; color: var(--muted); font-size: 13px; }
+  .note { color: var(--muted); font-size: 13px; margin: 10px 0 0; }
   .err { color: var(--err); }
   .scroll { overflow-x: auto; }
-  @media (max-width: 560px) { .hide-sm { display: none; } }
+
+  /* Health checks */
+  .checks { list-style: none; margin: 0; padding: 0; }
+  .checks li { padding: 10px 0; border-top: 1px solid var(--line); display: grid;
+               grid-template-columns: 26px 1fr; gap: 8px; }
+  .checks li:first-child { border-top: 0; padding-top: 0; }
+  .icon { width: 22px; height: 22px; border-radius: 50%; display: inline-grid; place-items: center;
+          font-size: 12px; font-weight: 700; color: #fff; background: var(--muted); }
+  .icon.ok { background: var(--ok); } .icon.warn { background: var(--warn); } .icon.error { background: var(--err); }
+  .checks .detail { color: var(--muted); font-size: 13px; overflow-wrap: anywhere; }
+  pre { background: var(--code); border: 1px solid var(--line); border-radius: 8px; padding: 12px;
+        font: 12.5px/1.45 ui-monospace, SFMono-Regular, Menlo, monospace; overflow-x: auto;
+        white-space: pre-wrap; margin: 10px 0 0; }
+  details summary { cursor: pointer; color: var(--muted); font-size: 13px; margin-top: 10px; }
+
+  /* Footer, as on the IsaacBot website */
+  .site-footer { position: relative; overflow: hidden; background: #0a0a0f; color: #fff; padding: 72px 0 0; }
+  .site-footer a { color: #d8d8dc; text-decoration: none; }
+  .site-footer a:hover { color: #fff; }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; }
+  .footer-brand img { width: 200px; height: auto; display: block; }
+  .footer-brand p { margin: 20px 0 0; color: #a0a0a6; max-width: 320px; }
+  .footer-col h4 { font-family: var(--font-head); font-size: 12px; font-weight: 500; margin: 0 0 18px;
+                   letter-spacing: .2em; text-transform: uppercase; color: #8a8a90; }
+  .footer-col ul { list-style: none; margin: 0; padding: 0; }
+  .footer-col li + li { margin-top: 10px; }
+  .footer-bottom { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-top: 56px;
+                   padding: 24px var(--gutter); border-top: 1px solid #2a2a2d; font-size: 14px; color: #a0a0a6; }
+  .footer-wordmark { display: block; width: min(1200px, 92vw); margin: 24px auto -3%; opacity: .08; }
+
+  @media (max-width: 860px) {
+    .footer-grid { grid-template-columns: 1fr 1fr; } .footer-brand { grid-column: 1 / -1; }
+  }
+  @media (max-width: 560px) {
+    .hide-sm { display: none; }
+    .footer-grid { grid-template-columns: 1fr; }
+    .site-header .container { gap: 10px; }
+    .site-header .logo img { width: 92px; }
+    .site-nav { gap: 12px; } .site-nav a { font-size: 11px; letter-spacing: .02em; }
+    .btn { height: 40px; gap: 6px; padding: 0 10px 0 12px; font-size: 12px; letter-spacing: .02em; }
+    .wide-only { display: none; }
+  }
 </style>
 </head>
 <body>
-<header>
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="/icons/isaacbot-mark-white.svg">
-    <img src="/icons/isaacbot-mark-black.svg" alt="IsaacBot" onerror="this.parentElement.remove()">
-  </picture>
-  <div>
-  <h1>Isaacbot network</h1>
-  <p>Wi-Fi uplink of the RUTX11 router. Every change is verified. If the new network does not
-     work within about a minute, the router restores the previous one automatically.</p>
-  </div>
-</header>
+<header class="site-header" id="top"><div class="container">
+  <a class="logo" href="/" aria-label="IsaacBot network">
+    <picture><source media="(prefers-color-scheme: dark)" srcset="/icons/isaacbot-lockup-white.svg">
+      <img src="/icons/isaacbot-lockup-black-bold.svg" alt="IsaacBot" width="180" height="25"></picture></a>
+  <span class="spacer"></span>
+  <nav class="site-nav" aria-label="Main"><a href="/" class="current" aria-current="page">Network</a></nav>
+  <a class="btn" id="drive-link" href="#" target="_blank" rel="noopener">
+    <span><span class="wide-only">Open </span>drive interface</span><span class="btn-chevrons"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8"></path></svg><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8"></path></svg></span></a>
+</div></header>
+
 <main>
+  <div class="page-title">
+    <h1>Network</h1>
+    <span class="spacer"></span>
+    <span id="status-pill" class="pill idle">checking…</span>
+  </div>
+  <p class="intro">The RUTX11 router's Wi-Fi uplink. Every change is verified. If the new network does
+    not work within about a minute, the router restores the previous one automatically.</p>
+
   <section id="status-card">
-    <h2><span class="grow">Internet uplink</span><span id="status-pill" class="pill idle">checking…</span>
-      <button id="refresh">Refresh</button></h2>
-    <dl id="status"></dl>
+    <h2><span class="grow">Internet uplink</span><button id="refresh">Refresh</button></h2>
+    <dl id="status" class="tiles"></dl>
     <p id="status-err" class="note err"></p>
   </section>
 
-  <section>
-    <h2><span class="grow">Connect to a Wi-Fi network</span>
-      <button id="scan" class="primary">Scan</button></h2>
-    <div class="scroll">
-      <table id="nets" hidden>
-        <thead><tr><th>Network</th><th class="hide-sm">Band</th><th>Signal</th><th>Security</th></tr></thead>
-        <tbody></tbody>
-      </table>
-    </div>
-    <p id="scan-note" class="note">Scan to list networks the router can see.
-      <a href="#" id="manual">Hidden network…</a></p>
-    <form id="connect" class="form" hidden autocomplete="off">
-      <label>Network <input id="f-ssid" required maxlength="32"></label>
-      <label id="enc-wrap" hidden>Security
-        <select id="f-enc">
-          <option value="psk2">WPA2-PSK</option><option value="sae-mixed">WPA2/WPA3</option>
-          <option value="sae">WPA3-SAE</option><option value="psk-mixed">WPA/WPA2</option>
-          <option value="none">Open</option>
-        </select></label>
-      <label id="key-wrap">Password
-        <div class="row"><input id="f-key" type="password" maxlength="64" style="flex:1">
-          <button type="button" id="show-key">Show</button></div></label>
-      <div class="row">
-        <button type="submit" class="primary" id="connect-btn">Connect</button>
-        <button type="button" id="cancel">Cancel</button>
+  <div class="grid-2">
+    <section>
+      <h2><span class="grow">Connect to a Wi-Fi network</span>
+        <button id="scan" class="primary">Scan</button></h2>
+      <div class="scroll">
+        <table id="nets" hidden>
+          <thead><tr><th>Network</th><th class="hide-sm">Band</th><th>Signal</th><th>Security</th></tr></thead>
+          <tbody></tbody>
+        </table>
       </div>
-      <p class="note">The isaacbot's own LAN and AP stay up during the switch. Only the internet uplink
-        changes, and it is rolled back if it fails.</p>
-    </form>
-  </section>
+      <p id="scan-note" class="note">Scan to list networks the router can see.
+        <a href="#" id="manual">Hidden network…</a></p>
+      <form id="connect" class="form" hidden autocomplete="off">
+        <label>Network <input id="f-ssid" required maxlength="32"></label>
+        <label id="enc-wrap" hidden>Security
+          <select id="f-enc">
+            <option value="psk2">WPA2-PSK</option><option value="sae-mixed">WPA2/WPA3</option>
+            <option value="sae">WPA3-SAE</option><option value="psk-mixed">WPA/WPA2</option>
+            <option value="none">Open</option>
+          </select></label>
+        <label id="key-wrap">Password
+          <div class="row"><input id="f-key" type="password" maxlength="64" style="flex:1">
+            <button type="button" id="show-key">Show</button></div></label>
+        <div class="row">
+          <button type="submit" class="primary" id="connect-btn">Connect</button>
+          <button type="button" id="cancel">Cancel</button>
+        </div>
+        <p class="note" style="margin:0">The isaacbot's own LAN and AP stay up during the switch. Only
+          the internet uplink changes, and it is rolled back if it fails.</p>
+      </form>
+    </section>
 
-  <section>
-    <h2><span class="grow">Health check</span><span id="audit-pill" class="pill idle">…</span>
-      <button id="repair" hidden>Repair</button></h2>
-    <ul class="checks" id="checks"></ul>
-    <details id="repair-preview" hidden><summary>Commands Repair will run</summary><pre></pre></details>
-    <p id="pending" class="note err" hidden></p>
-  </section>
+    <section>
+      <h2><span class="grow">Health check</span><span id="audit-pill" class="pill idle">…</span>
+        <button id="repair" class="primary" hidden>Repair</button></h2>
+      <ul class="checks" id="checks"></ul>
+      <details id="repair-preview" hidden><summary>Commands Repair will run</summary><pre></pre></details>
+      <p id="pending" class="note err" hidden></p>
+    </section>
+  </div>
 
   <section id="job-card" hidden>
     <h2><span class="grow" id="job-title">Job</span><span id="job-pill" class="pill idle"></span></h2>
     <pre id="job-log"></pre>
   </section>
 </main>
+
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-brand"><a href="/" aria-label="IsaacBot network">
+        <img src="/icons/isaacbot-lockup-white.svg" alt="IsaacBot" width="200" height="44" loading="lazy"></a>
+      <p>From a falling apple to autonomous logistics.</p></div>
+    <div class="footer-col"><h4>Navigate</h4><ul>
+      <li><a href="/">Network</a></li>
+      <li><a id="drive-link-footer" href="#" target="_blank" rel="noopener">Drive interface</a></li>
+      <li><a href="http://10.8.0.1/" target="_blank" rel="noopener">IsaacBot website</a></li></ul></div>
+    <div class="footer-col"><h4>Contact</h4><ul>
+      <li><a href="mailto:potlogradu@gmail.com">potlogradu@gmail.com</a></li></ul></div>
+  </div>
+  <div class="container footer-bottom"><span>© <span id="year">2026</span> IsaacBot. All rights reserved.</span>
+    <a href="#top">Back to top ↑</a></div>
+  <img class="footer-wordmark" src="/icons/isaacbot-lockup-white.svg" alt="" aria-hidden="true" loading="lazy">
+</footer>
+
 <script>
 'use strict';
 const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
 let selected = null, busy = false;
+
+// The drive interface runs on the same isaacbot (isaacbot-amr-drive-interface, port 5000).
+$('#drive-link').href = $('#drive-link-footer').href = `http://${location.hostname}:5000/`;
+$('#year').textContent = new Date().getFullYear();
 
 async function api(path, body) {
   const opt = body === undefined ? {} : {
@@ -165,7 +294,12 @@ async function api(path, body) {
 function bars(dbm) {
   if (dbm == null) return '';
   const n = dbm >= -55 ? 4 : dbm >= -65 ? 3 : dbm >= -75 ? 2 : 1;
-  return `<span class="bars">${'▮'.repeat(n)}${'▯'.repeat(4 - n)}</span> ${dbm} dBm`;
+  const ticks = [1, 2, 3, 4].map((i) => `<i class="${i <= n ? 'on' : ''}"></i>`).join('');
+  return `<span class="bars" title="${n}/4">${ticks}</span>${dbm} dBm`;
+}
+
+function tile(label, value, sub) {
+  return `<div class="tile"><dt>${label}</dt><dd>${value}${sub ? `<span class="sub">${sub}</span>` : ''}</dd></div>`;
 }
 
 async function loadStatus() {
@@ -176,13 +310,16 @@ async function loadStatus() {
     const pill = $('#status-pill');
     pill.className = 'pill ' + (s.healthy ? 'ok' : 'error');
     pill.textContent = s.healthy ? 'Online' : (rt.ssid ? 'No internet' : 'Not connected');
-    $('#status').innerHTML = `
-      <dt>Network</dt><dd>${esc(rt.ssid || '—')}${cfg.ssid && cfg.ssid !== rt.ssid ? ` <span class="err">(configured: ${esc(cfg.ssid)})</span>` : ''}</dd>
-      <dt>Signal</dt><dd>${rt.signal != null ? bars(rt.signal) + (rt.channel ? `, channel ${rt.channel}` : '') : '—'}</dd>
-      <dt>Address</dt><dd>${esc(rt.ipv4 || '—')}${rt.gateway ? ` via ${esc(rt.gateway)}` : ''}</dd>
-      <dt>Interface</dt><dd>${esc(s.settings.uplink_iface)}${s.settings.auto ? ' (auto-detected)' : ''}, ${esc(rt.device || '?')} on ${esc(cfg.radio || '?')}</dd>
-      <dt>Internet</dt><dd>${rt.internet ? 'reachable' : 'unreachable'}</dd>
-      <dt>LAN / AP clients</dt><dd>${rt.masquerade ? 'NAT active: ' + esc(s.settings.client_nets.join(', ')) + ' have internet' : '<span class="err">no NAT on the uplink</span>'}</dd>`;
+    $('#status').innerHTML =
+      tile('Network', esc(rt.ssid || '—'),
+           cfg.ssid && cfg.ssid !== rt.ssid ? `<span class="err">configured: ${esc(cfg.ssid)}</span>` : '') +
+      tile('Signal', rt.signal != null ? bars(rt.signal) : '—', rt.channel ? `channel ${rt.channel}` : '') +
+      tile('Address', esc(rt.ipv4 || '—'), rt.gateway ? `via ${esc(rt.gateway)}` : '') +
+      tile('Internet', rt.internet ? 'Reachable' : '<span class="err">Unreachable</span>') +
+      tile('Interface', esc(s.settings.uplink_iface) + (s.settings.auto ? ' <span class="sub" style="display:inline">(auto)</span>' : ''),
+           `${esc(rt.device || '?')} on ${esc(cfg.radio || '?')}`) +
+      tile('LAN / AP clients', rt.masquerade ? 'NAT active' : '<span class="err">No NAT on the uplink</span>',
+           rt.masquerade ? esc(s.settings.client_nets.join(', ')) + ' have internet' : '');
   } catch (e) {
     $('#status-pill').className = 'pill error'; $('#status-pill').textContent = 'Router unreachable';
     $('#status-err').textContent = e.message;
@@ -200,7 +337,7 @@ async function loadAudit() {
     $('#checks').innerHTML = a.checks.map((c) => `
       <li><span class="icon ${c.status}">${icon[c.status]}</span><div>
         <div>${esc(c.title)}</div><div class="detail">${esc(c.detail)}</div>
-        ${c.actions.length ? `<div class="row" style="margin-top:6px">${c.actions.map((x) =>
+        ${c.actions.length ? `<div class="row" style="margin-top:8px">${c.actions.map((x) =>
           `<button data-action="${esc(x.id)}" class="${x.id.startsWith('delete') ? 'danger' : ''}"
              title="${esc(x.preview.join('\n'))}">${esc(x.label)}</button>`).join('')}</div>` : ''}
       </div></li>`).join('');
@@ -223,7 +360,7 @@ async function scan() {
     const tb = $('#nets tbody');
     tb.innerHTML = nets.map((n, i) => `
       <tr data-i="${i}" class="${n.encryption === 'unsupported' ? 'nope' : ''}">
-        <td>${esc(n.ssid)}${n.aps > 1 ? ` <span class="note">(${n.aps} APs)</span>` : ''}</td><td class="hide-sm">${esc(n.band)}</td><td>${bars(n.signal)}</td>
+        <td>${esc(n.ssid)}${n.aps > 1 ? ` <span class="note">(${n.aps} APs)</span>` : ''}</td><td class="hide-sm">${esc(n.band)}</td><td style="white-space:nowrap">${bars(n.signal)}</td>
         <td>${n.encryption === 'unsupported' ? 'Unsupported: ' : ''}${esc(n.security || n.encryption)}</td></tr>`).join('');
     $('#nets').hidden = nets.length === 0;
     $('#scan-note').firstChild.textContent = nets.length ? `${nets.length} networks. Click one to connect. ` : 'No networks found. ';
