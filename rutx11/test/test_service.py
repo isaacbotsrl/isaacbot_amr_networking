@@ -62,11 +62,11 @@ def errors(router):
 def test_status_healthy():
     _, svc = make()
     s = svc.status()
-    assert s['healthy'] and s['configured']['ssid'] == 'Orange-Tekwill'
+    assert s['healthy'] and s['configured']['ssid'] == 'Site-Guest'
 
 
 def test_switch_happy_path_keeps_change():
-    router, svc = make(networks={'Orange-Tekwill': '<REDACTED>', 'Cafe': 'password1'})
+    router, svc = make(networks={'Site-Guest': '<REDACTED>', 'Cafe': 'password1'})
     job = run(svc.start_switch('Cafe', 'psk2', 'password1', 'radio0'))
     assert job.status == 'succeeded', job.to_dict()
     assert uplink_sta(router.snap, ST).get('ssid') == 'Cafe'
@@ -75,23 +75,23 @@ def test_switch_happy_path_keeps_change():
 
 
 def test_wrong_password_rolls_back():
-    router, svc = make(networks={'Orange-Tekwill': '<REDACTED>', 'Cafe': 'password1'})
+    router, svc = make(networks={'Site-Guest': '<REDACTED>', 'Cafe': 'password1'})
     job = run(svc.start_switch('Cafe', 'psk2', 'wrongpass', 'radio0'))
     assert job.status == 'failed'
     assert 'did not associate' in job.result
-    assert uplink_sta(router.snap, ST).get('ssid') == 'Orange-Tekwill'
+    assert uplink_sta(router.snap, ST).get('ssid') == 'Site-Guest'
     assert any(line.startswith('rollback') for line in router.log)
 
 
 def test_apply_error_rolls_back():
-    router, svc = make(networks={'Orange-Tekwill': '<REDACTED>', 'Cafe': 'password1'})
+    router, svc = make(networks={'Site-Guest': '<REDACTED>', 'Cafe': 'password1'})
     router.fail_apply = True
     job = run(svc.start_switch('Cafe', 'psk2', 'password1', 'radio0'))
     assert job.status == 'failed' and router.log[-1].startswith('rollback')
 
 
 def test_pending_rutos_changes_refuse():
-    router, svc = make(networks={'Orange-Tekwill': '<REDACTED>', 'Cafe': 'password1'})
+    router, svc = make(networks={'Site-Guest': '<REDACTED>', 'Cafe': 'password1'})
     router.pending = "wireless.cfg093579.ssid='x'"
     job = run(svc.start_switch('Cafe', 'psk2', 'password1', 'radio0'))
     assert job.status == 'failed' and 'uncommitted' in job.result
@@ -106,7 +106,7 @@ def test_bad_credentials_rejected_before_job():
 
 def test_switch_repairs_broken_router():
     router, svc = make('after_rutos_join.uci',
-                       networks={'Orange-Tekwill': '<REDACTED>', 'Cafe': 'password1'})
+                       networks={'Site-Guest': '<REDACTED>', 'Cafe': 'password1'})
     job = run(svc.start_switch('Cafe', 'psk2', 'password1', 'radio0'))
     assert job.status == 'succeeded', job.to_dict()
     assert errors(router) == []

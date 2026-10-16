@@ -51,7 +51,7 @@ def test_real_config_resolves_to_wwan1_and_is_clean():
 def test_switch_keeps_the_rutos_section_names():
     snap = load('rutos_20260928.uci')
     st = resolve_settings(snap, AUTO)
-    after = snap.apply(plan_switch(snap, st, 'Orange-Tekwill', 'psk2', 'password1', 'radio0'))
+    after = snap.apply(plan_switch(snap, st, 'Site-Guest', 'psk2', 'password1', 'radio0'))
     sta = uplink_sta(after, resolve_settings(after, AUTO))
     assert sta.name == '2' and sta.get('network') == 'WWAN1' and sta.get('device') == 'radio0'
     assert zone(after, 'wwan').get('network') == 'WWAN1'
@@ -87,7 +87,7 @@ def test_rutos_join_adopt_old_uplink_back():
     final = snap.apply(plan_action(snap, st, 'adopt:2'))
     st2 = resolve_settings(final, AUTO)
     sta = uplink_sta(final, st2)
-    assert st2.uplink_iface == 'wan1' and sta.get('ssid') == 'Tekwill'
+    assert st2.uplink_iface == 'wan1' and sta.get('ssid') == 'Site-Main'
     assert sta.get('device') == 'radio1'
     assert errors(final, st2) == set()
 
@@ -109,8 +109,8 @@ def test_live_router_20260929_is_clean():
     assert errors(snap, st) == set()
     assert repair_plan(audit_config(snap, st)) == []
     sta = uplink_sta(snap, st)
-    after = snap.apply(plan_switch(snap, st, 'Tekwill', 'psk2', 'password1', 'radio0'))
-    assert {c.pkg for c in plan_switch(snap, st, 'Tekwill', 'psk2', 'password1', 'radio0')} == {'wireless'}
+    after = snap.apply(plan_switch(snap, st, 'Site-Main', 'psk2', 'password1', 'radio0'))
+    assert {c.pkg for c in plan_switch(snap, st, 'Site-Main', 'psk2', 'password1', 'radio0')} == {'wireless'}
     assert uplink_sta(after, resolve_settings(after, AUTO)).name == sta.name
 
 

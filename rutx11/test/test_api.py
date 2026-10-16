@@ -31,7 +31,7 @@ POST = {'X-Requested-With': 'netui'}
 
 @pytest.fixture
 def client():
-    router = FakeRouter(FIX / 'healthy.uci', {'Orange-Tekwill': '<REDACTED>', 'Cafe': 'password1'})
+    router = FakeRouter(FIX / 'healthy.uci', {'Site-Guest': '<REDACTED>', 'Cafe': 'password1'})
     svc = UplinkService(router, UplinkSettings(), JobRunner(),
                         Timing(verify_s=1, poll_s=0.01, settle_s=0))
     c = TestClient(create_app(svc, *AUTH))
@@ -91,4 +91,4 @@ def test_audit_and_scan(client):
     a = client.get('/api/audit', auth=AUTH).json()
     assert a['repair'] == [] and all(c['status'] == 'ok' for c in a['checks'])
     nets = client.get('/api/scan', auth=AUTH).json()
-    assert {'Orange-Tekwill', 'Cafe'} <= {n['ssid'] for n in nets}
+    assert {'Site-Guest', 'Cafe'} <= {n['ssid'] for n in nets}

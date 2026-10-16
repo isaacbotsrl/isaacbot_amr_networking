@@ -95,7 +95,7 @@ def test_adopt_orphan_moves_credentials_into_wan1():
 def test_delete_orphan_keeps_old_uplink():
     snap = load('after_rutos_join.uci')
     after = snap.apply(plan_action(snap, ST, 'delete:cfg0c4f2a'))
-    assert uplink_sta(after, ST).get('ssid') == 'Orange-Tekwill'
+    assert uplink_sta(after, ST).get('ssid') == 'Site-Guest'
     assert errors(audit_config(after, ST)) == []
 
 
@@ -121,10 +121,10 @@ def test_switch_on_broken_router_repairs_everything():
 def test_iwinfo_text_scan():
     nets = merge_scans(parse_iwinfo_scan((FIX / 'iwinfo_scan.txt').read_text(), 'radio0'))
     by = {n.ssid: n for n in nets}
-    assert by['Orange-Tekwill'].encryption == 'psk2' and by['Orange-Tekwill'].channel == 6
+    assert by['Site-Guest'].encryption == 'psk2' and by['Site-Guest'].channel == 6
     assert by['Field Hotspot'].encryption == 'sae-mixed' and by['Field Hotspot'].band == '5 GHz'
     assert by['Corp'].encryption == 'unsupported'
-    assert nets[0].ssid == 'Orange-Tekwill'  # strongest first
+    assert nets[0].ssid == 'Site-Guest'  # strongest first
 
 
 @pytest.mark.parametrize('enc,expected', [
@@ -153,16 +153,16 @@ def test_bad_credentials(ssid, enc, key):
 
 
 def test_good_credentials():
-    validate_credentials('Orange-Tekwill', 'psk2', "it's a pass")
+    validate_credentials('Site-Guest', 'psk2', "it's a pass")
     validate_credentials('Open', 'none', None)
     validate_credentials('Hex', 'psk2', 'a' * 64)
 
 
 def test_scan_merges_access_points_of_one_network():
     from uplink_manager.domain.wifi import WifiNetwork
-    raw = [WifiNetwork('Tekwill', f'AA:00:00:00:00:0{i}', ch, sig, 'psk2', 'WPA2 PSK', 'radio0')
+    raw = [WifiNetwork('Site-Main', f'AA:00:00:00:00:0{i}', ch, sig, 'psk2', 'WPA2 PSK', 'radio0')
            for i, (ch, sig) in enumerate([(1, -55), (11, -62), (1, -68)])]
-    raw.append(WifiNetwork('Orange-Tekwill', 'BB:00:00:00:00:01', 2, -64, 'none', 'Open', 'radio0'))
+    raw.append(WifiNetwork('Site-Guest', 'BB:00:00:00:00:01', 2, -64, 'none', 'Open', 'radio0'))
     nets = merge_scans(raw)
     assert [(n.ssid, n.aps, n.signal, n.channel) for n in nets] == [
-        ('Tekwill', 3, -55, 1), ('Orange-Tekwill', 1, -64, 2)]
+        ('Site-Main', 3, -55, 1), ('Site-Guest', 1, -64, 2)]

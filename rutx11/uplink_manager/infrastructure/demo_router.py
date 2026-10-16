@@ -28,12 +28,12 @@ from ..domain.uci import UciCmd, parse_uci_show
 from ..domain.wifi import WifiNetwork
 
 # SSID → the only key that associates ('' = open). Fixture keys are all '<REDACTED>'.
-DEMO_NETWORKS = {'Orange-Tekwill': '<REDACTED>', 'Tekwill': '<REDACTED>',
+DEMO_NETWORKS = {'Site-Guest': '<REDACTED>', 'Site-Main': '<REDACTED>',
                  'Field Hotspot': '<REDACTED>', 'Cafe': 'password1', 'Guest': ''}
 
 _DEMO_SCAN = [
-    ('Orange-Tekwill', 6, -58, 'psk2', 'WPA2 PSK (CCMP)', 'radio0'),
-    ('Tekwill', 36, -63, 'psk2', 'WPA2 PSK (CCMP)', 'radio1'),
+    ('Site-Guest', 6, -58, 'psk2', 'WPA2 PSK (CCMP)', 'radio0'),
+    ('Site-Main', 36, -63, 'psk2', 'WPA2 PSK (CCMP)', 'radio1'),
     ('Field Hotspot', 44, -71, 'sae-mixed', 'mixed WPA2/WPA3 PSK/SAE (CCMP)', 'radio1'),
     ('Cafe', 1, -77, 'psk2', 'WPA2 PSK (CCMP)', 'radio0'),
     ('Guest', 11, -69, 'none', 'Open', 'radio0'),

@@ -45,8 +45,8 @@ Contents:
 | Network | Zone | Subnet | What is on it |
 |---------|------|--------|---------------|
 | `lan` (br-lan, wired) | `lan` | 192.168.1.0/24, router .1 | ROS controller **.201 and .102** (same MAC); RS16 lidar .200 (sends UDP to .102); dev laptop Ethernet .184 (static). DHCP pool .110–.249. **.102 must never be handed to another device.** |
-| `WWAN` (the isaacbot's own AP "ROVER-A1-001-2.4GHz", radio0) | `lan` | 192.168.77.0/24, router .1 | BMS .201, front LED .202, laptops. DHCP pool .100–.149 |
-| Wi-Fi uplink (STA) | `wwan` (masquerade) | from the site's DHCP | Uplink to the site network, e.g. "Tekwill" / "Orange-Tekwill". `WWAN1` in the 2026-09-28 backup; a later RutOS join made it `wan1`. The page detects which one it is. |
+| `WWAN` (the isaacbot's own AP "ISAACBOT-01-2.4GHz", radio0) | `lan` | 192.168.77.0/24, router .1 | BMS .201, front LED .202, laptops. DHCP pool .100–.149 |
+| Wi-Fi uplink (STA) | `wwan` (masquerade) | from the site's DHCP | Uplink to the site network, e.g. "Site-Main" / "Site-Guest". `WWAN1` in the 2026-09-28 backup; a later RutOS join made it `wan1`. The page detects which one it is. |
 
 The GPS module's NMEA is forwarded over UDP to `192.168.1.201:10110`. It is configured by
 `isaacbot_amr_sensors/isaacbot_amr_gps/scripts/rutx11_gps_nmea_forwarding.sh`.
@@ -192,9 +192,9 @@ The tests ran on 2026-09-29 against the real router and were driven from the ROS
 | Test | Outcome | Duration | AP (isaacbot Wi-Fi) |
 |------|---------|----------|------------------|
 | Read-only audit + scan | all checks green; 33 networks, merged to one row per SSID | 2.6 s scan | untouched |
-| Switch to Tekwill with a **wrong password** | not associated after 75 s → rolled back to Orange-Tekwill, healthy 10 s later | ~90 s | ~1 s blink per failed retry (every ~25 s) |
-| Switch to Tekwill (WPA2) | associated, DHCP, internet + NAT verified, kept | 18 s | a few 1–5 s blinks |
-| Back to Orange-Tekwill (open) | key removed, verified, kept | 16 s | a few 1–5 s blinks |
+| Switch to Site-Main with a **wrong password** | not associated after 75 s → rolled back to Site-Guest, healthy 10 s later | ~90 s | ~1 s blink per failed retry (every ~25 s) |
+| Switch to Site-Main (WPA2) | associated, DHCP, internet + NAT verified, kept | 18 s | a few 1–5 s blinks |
+| Back to Site-Guest (open) | key removed, verified, kept | 16 s | a few 1–5 s blinks |
 
 Every switch changed only `wireless.3` (`ssid` / `encryption` / `key`). The interface, zones and
 NAT were never touched, and all router-side rollback timers stood down afterwards.
@@ -204,7 +204,7 @@ NAT were never touched, and all router-side rollback timers stood down afterward
 The laptop has to reach the router over SSH. Either:
 
 - plug into the **isaacbot LAN** (Ethernet), or
-- join the **isaacbot AP "ROVER-A1-001-2.4GHz"**.
+- join the **isaacbot AP "ISAACBOT-01-2.4GHz"**.
 
 `192.168.1.1` answers from both. From the uplink side, the router rejects SSH by design.
 Switching the uplink never drops a laptop that is on the isaacbot LAN or AP.

@@ -1,5 +1,5 @@
 Cell 01 - Address: AA:BB:CC:00:11:22
-          ESSID: "Orange-Tekwill"
+          ESSID: "Site-Guest"
           Mode: Master  Frequency: 2.437 GHz  Band: 2.4 GHz  Channel: 6
           Signal: -58 dBm  Quality: 52/70
           Encryption: WPA2 PSK (CCMP)
